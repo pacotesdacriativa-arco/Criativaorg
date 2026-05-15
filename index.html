@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Pedidos</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at top left,#c79552 0,#66301E 28%,#2b120b 75%);
+  color:#fff7e8;
+  min-height:100vh;
+}
+
+.hidden{display:none}
+
+.container{
+  max-width:460px;
+  margin:auto;
+  padding:24px;
+  min-height:100vh;
+}
+
+.login{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.box{
+  width:100%;
+  max-width:420px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,215,130,.35);
+  border-radius:32px;
+  padding:28px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 0 35px rgba(255,190,80,.25);
+}
+
+.logo{
+  text-align:center;
+  font-size:52px;
+  filter:drop-shadow(0 0 18px #ffd27a);
+}
+
+h1,h2,h3{
+  text-align:center;
+  color:#ffd27a;
+  text-shadow:0 0 12px rgba(255,210,122,.35);
+}
+
+.sub{
+  text-align:center;
+  color:#f7dcb4;
+  font-weight:bold;
+}
+
+.card{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,215,130,.35);
+  border-radius:26px;
+  padding:20px;
+  margin:18px 0;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:bold;
+  color:#ffe1a6;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  margin-top:7px;
+  border-radius:16px;
+  border:1px solid #d9a64f;
+  background:#fff7e8;
+  color:#3b1a10;
+  font-size:15px;
+}
+
+textarea{
+  height:75px;
+  resize:none;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  margin-top:15px;
+  border:none;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-gold{
+  background:linear-gradient(135deg,#b98218,#ffd27a,#fff0b8);
+  color:#3b1a10;
+  box-shadow:0 0 22px rgba(255,210,122,.45);
+}
+
+.btn-brown{
+  background:#66301E;
+  color:#ffd27a;
+  border:1px solid #ffd27a;
+}
+
+.resumo{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.box-resumo{
+  background:rgba(255,247,232,.12);
+  border:1px solid rgba(255,210,122,.35);
+  padding:14px;
+  border-radius:18px;
+  text-align:center;
+}
+
+.valor{
+  font-size:21px;
+  font-weight:bold;
+  color:#ffd27a;
+}
+
+.pedido{
+  background:#fff7e8;
+  color:#3b1a10;
+  padding:14px;
+  border-radius:18px;
+  margin-top:12px;
+  border-left:6px solid #ffd27a;
+}
+
+.status{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.status span{
+  flex:1;
+  text-align:center;
+  padding:7px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.pago{background:#d6ffd8;color:#176d22}
+.naopago{background:#ffe0e0;color:#9b1b1b}
+.entregue{background:#d8e6ff;color:#173f8a}
+.naoentregue{background:#fff1c9;color:#8a5b00}
+
+.delete{
+  background:#8b2b1a;
+  color:white;
+  padding:10px;
+  margin-top:10px;
+}
+
+.data-title{
+  margin-top:22px;
+  padding:10px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#66301E,#b98218);
+  color:#fff7e8;
+  font-weight:bold;
+  text-align:center;
+}
+
+footer{
+  text-align:center;
+  color:#f7dcb4;
+  font-size:12px;
+  margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login" id="login">
+  <div class="box">
+    <div class="logo">🤎</div>
+    <h1>Controle Criativa</h1>
+    <p class="sub">Pedidos, dinheiro e organização em um só lugar ✨</p>
+
+    <label>Senha</label>
+    <input type="password" id="senha" placeholder="Digite a senha">
+
+    <button class="btn-gold" onclick="entrar()">Entrar</button>
+  </div>
+</div>
+
+<div class="container hidden" id="app">
+
+  <div class="logo">✨</div>
+  <h1>Controle de Pedidos</h1>
+  <p class="sub">Sua central marrom & dourada premium</p>
+
+  <div class="card">
+    <h2>Resumo financeiro</h2>
+
+    <label>Gasto com anúncio hoje</label>
+    <input type="number" id="gastoAnuncio" placeholder="Ex: 42" oninput="salvarGasto()">
+
+    <div class="resumo">
+      <div class="box-resumo">
+        <div>Entrou</div>
+        <div class="valor" id="totalEntrou">R$0,00</div>
+      </div>
+
+      <div class="box-resumo">
+        <div>Anúncio</div>
+        <div class="valor" id="totalAnuncio">R$0,00</div>
+      </div>
+
+      <div class="box-resumo">
+        <div>Lucro real</div>
+        <div class="valor" id="lucroReal">R$0,00</div>
+      </div>
+
+      <div class="box-resumo">
+        <div>Pedidos</div>
+        <div class="valor" id="qtdPedidos">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Novo pedido</h2>
+
+    <label>Nome da cliente</label>
+    <input type="text" id="cliente" placeholder="Ex: Ana Paula">
+
+    <label>Serviço</label>
+    <select id="servico" onchange="preencherValor()">
+      <option value="10">Logotipo - R$10,00</option>
+      <option value="10">Marca d’água - R$10,00</option>
+      <option value="25">Tabela de preços - R$25,00</option>
+      <option value="22">Bonequinha - R$22,00</option>
+      <option value="32">Logotipo com bonequinha - R$32,00</option>
+      <option value="18">4 figurinhas do WhatsApp - R$18,00</option>
+      <option value="2">Capas para destaques - R$2,00 cada</option>
+      <option value="25">Cartão de visita digital - R$25,00</option>
+    </select>
+
+    <label>Data</label>
+    <input type="date" id="data">
+
+    <label>Valor</label>
+    <input type="number" id="valor" placeholder="Valor do pedido">
+
+    <label>Pago?</label>
+    <select id="pago">
+      <option value="sim">Sim</option>
+      <option value="nao">Não</option>
+    </select>
+
+    <label>Entregue?</label>
+    <select id="entregue">
+      <option value="nao">Não</option>
+      <option value="sim">Sim</option>
+    </select>
+
+    <label>Prioridade</label>
+    <select id="prioridade">
+      <option>Normal</option>
+      <option>Urgente</option>
+      <option>Baixa</option>
+    </select>
+
+    <label>Observação</label>
+    <textarea id="obs" placeholder="Ex: cliente quer dourado, fundo branco, nome tal..."></textarea>
+
+    <button class="btn-gold" onclick="adicionarPedido()">Salvar pedido ✨</button>
+  </div>
+
+  <div class="card">
+    <h2>Pedidos por dia</h2>
+    <div id="listaPedidos"></div>
+  </div>
+
+  <button class="btn-brown" onclick="sair()">Sair</button>
+
+  <footer>Controle Criativa 🤎✨</footer>
+
+</div>
+
+<script>
+let pedidos = JSON.parse(localStorage.getItem("pedidosCriativa")) || [];
+let gasto = Number(localStorage.getItem("gastoAnuncioCriativa")) || 0;
+
+document.getElementById("gastoAnuncio").value = gasto || "";
+
+function entrar(){
+  let senha = document.getElementById("senha").value;
+
+  if(senha === "flor8"){
+    document.getElementById("login").style.display = "none";
+    document.getElementById("app").classList.remove("hidden");
+    atualizar();
+  }else{
+    alert("Senha incorreta.");
+  }
+}
+
+function sair(){
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").style.display = "flex";
+}
+
+function dinheiro(v){
+  return Number(v).toLocaleString("pt-BR", {
+    style:"currency",
+    currency:"BRL"
+  });
+}
+
+function preencherValor(){
+  document.getElementById("valor").value = document.getElementById("servico").value;
+}
+
+function salvarGasto(){
+  gasto = Number(document.getElementById("gastoAnuncio").value) || 0;
+  localStorage.setItem("gastoAnuncioCriativa", gasto);
+  atualizar();
+}
+
+function adicionarPedido(){
+  let cliente = document.getElementById("cliente").value;
+  let servicoTexto = document.getElementById("servico").options[document.getElementById("servico").selectedIndex].text;
+  let data = document.getElementById("data").value;
+  let valor = Number(document.getElementById("valor").value);
+  let pago = document.getElementById("pago").value;
+  let entregue = document.getElementById("entregue").value;
+  let prioridade = document.getElementById("prioridade").value;
+  let obs = document.getElementById("obs").value;
+
+  if(!cliente || !data || !valor){
+    alert("Preencha cliente, data e valor.");
+    return;
+  }
+
+  pedidos.push({
+    cliente,
+    servico:servicoTexto,
+    data,
+    valor,
+    pago,
+    entregue,
+    prioridade,
+    obs
+  });
+
+  salvar();
+
+  document.getElementById("cliente").value="";
+  document.getElementById("data").value="";
+  document.getElementById("valor").value="";
+  document.getElementById("obs").value="";
+  document.getElementById("pago").value="sim";
+  document.getElementById("entregue").value="nao";
+  document.getElementById("prioridade").value="Normal";
+
+  atualizar();
+}
+
+function salvar(){
+  localStorage.setItem("pedidosCriativa", JSON.stringify(pedidos));
+}
+
+function excluirPedido(index){
+  if(confirm("Excluir esse pedido?")){
+    pedidos.splice(index,1);
+    salvar();
+    atualizar();
+  }
+}
+
+function alternarPago(index){
+  pedidos[index].pago = pedidos[index].pago === "sim" ? "nao" : "sim";
+  salvar();
+  atualizar();
+}
+
+function alternarEntregue(index){
+  pedidos[index].entregue = pedidos[index].entregue === "sim" ? "nao" : "sim";
+  salvar();
+  atualizar();
+}
+
+function atualizarResumo(){
+  let totalEntrou = pedidos
+    .filter(p=>p.pago==="sim")
+    .reduce((s,p)=>s + Number(p.valor),0);
+
+  let lucro = totalEntrou - gasto;
+
+  document.getElementById("totalEntrou").innerText = dinheiro(totalEntrou);
+  document.getElementById("totalAnuncio").innerText = dinheiro(gasto);
+  document.getElementById("lucroReal").innerText = dinheiro(lucro);
+  document.getElementById("qtdPedidos").innerText = pedidos.length;
+}
+
+function atualizarPedidos(){
+  let lista = document.getElementById("listaPedidos");
+  lista.innerHTML = "";
+
+  if(pedidos.length === 0){
+    lista.innerHTML = "<p style='text-align:center;color:#f7dcb4;'>Nenhum pedido cadastrado ainda.</p>";
+    return;
+  }
+
+  let agrupados = {};
+
+  pedidos.forEach((p,index)=>{
+    if(!agrupados[p.data]){
+      agrupados[p.data] = [];
+    }
+    agrupados[p.data].push({...p,index});
+  });
+
+  Object.keys(agrupados).sort().reverse().forEach(data=>{
+    lista.innerHTML += `<div class="data-title">📅 ${data}</div>`;
+
+    agrupados[data].forEach(p=>{
+      lista.innerHTML += `
+        <div class="pedido">
+          <strong>${p.cliente}</strong><br>
+          🎨 ${p.servico}<br>
+          💰 ${dinheiro(p.valor)}<br>
+          ⭐ Prioridade: ${p.prioridade}<br>
+          📝 ${p.obs || "Sem observação"}
+
+          <div class="status">
+            <span class="${p.pago === "sim" ? "pago" : "naopago"}">
+              ${p.pago === "sim" ? "Pago" : "Não pago"}
+            </span>
+
+            <span class="${p.entregue === "sim" ? "entregue" : "naoentregue"}">
+              ${p.entregue === "sim" ? "Entregue" : "Pendente"}
+            </span>
+          </div>
+
+          <button class="btn-brown" onclick="alternarPago(${p.index})">Mudar pago</button>
+          <button class="btn-brown" onclick="alternarEntregue(${p.index})">Mudar entrega</button>
+          <button class="delete" onclick="excluirPedido(${p.index})">Excluir</button>
+        </div>
+      `;
+    });
+  });
+}
+
+function atualizar(){
+  atualizarResumo();
+  atualizarPedidos();
+}
+
+preencherValor();
+</script>
+
+</body>
+</html>
